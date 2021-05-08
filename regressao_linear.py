@@ -21,6 +21,9 @@ Created on Mon Apr 19 11:32:34 2021
    - update weights: ajuste dos pesos do modelo
 """
 
+use_cuda = torch.cuda.is_available()
+device = torch.device("cuda:0" if use_cuda else "cpu")
+
 # preparar dados (pq make_regression? pq não aletatório com torch.randn?)
 X_np, y_np = datasets.make_regression(n_samples=100, n_features=1, noise=20,
                                       random_state=1)
@@ -30,14 +33,14 @@ y = torch.from_numpy(y_np.astype(np.float32))
 
 # converte y para o mesmo formato de x: uma lista com uma lista de 100 elementos
 y = y.view(y.shape[0], 1)
-print(y)
-raise SystemExit
 
 # Criar modelo
 n_sample, n_features = X.shape
 
 # Pq nao randn? Pq para um modelo linear deve ser normalizado
 model = nn.Linear(n_features, n_features)
+if use_cuda:
+    model.cuda()
 
 # Função de erro
 criterion = nn.MSELoss()
