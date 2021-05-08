@@ -1,0 +1,52 @@
+import torch
+import torch.nn as nn
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+x_np = np.array(list(range(1, 11)))
+y_np = x_np ** 2
+
+x = torch.from_numpy(x_np.astype(np.float32))
+y = torch.from_numpy(y_np.astype(np.float32))
+
+y = y.view(y.shape[0], 1)
+x = x.view(x.shape[0], 1)
+
+# Criar modelo
+n_sample, n_features = x.shape
+
+# model = nn.Linear(n_features, n_features)
+model = nn.Sequential(nn.Linear(1, 10),
+                      nn.ReLU(),
+                      # nn.Sigmoid(),
+                      nn.Linear(10, 1))
+
+# Função de erro
+criterion = nn.MSELoss()
+criterion = nn.L1Loss()
+
+# Otimizador
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+epochs = 10000
+for e in range(epochs):
+    # forward and loss
+    y_predict = model(x)
+    loss = criterion(y_predict, y)
+    # backward
+    loss.backward()
+    # weights update and zero grad
+    optimizer.step()
+    optimizer.zero_grad()
+    if (e + 1) % 10 == 0:
+        print(f'epoch: {e + 1} loss: {loss.item():.4f}')
+print(loss.item())
+predicted = model(x).detach().numpy()
+plt.plot(x_np, y_np, 'ro')
+plt.plot(x_np, predicted, 'b')
+plt.show()
+
+
+
+
