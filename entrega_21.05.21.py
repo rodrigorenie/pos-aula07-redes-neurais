@@ -223,7 +223,8 @@ class NetworkGenerator:
         g4.bar(x, g4y2, width=0.6, color='g', align='center')
 
         fig.tight_layout()
-        pyplot.show()
+        fig.set_size_inches(18.5, 10.5)
+        fig.savefig('output.png', dpi=100)
 
 
 if __name__ == '__main__':
